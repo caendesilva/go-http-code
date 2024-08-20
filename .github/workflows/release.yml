@@ -29,6 +29,9 @@ jobs:
         mkdir -p dist
         GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/http-code-${{ matrix.goos }}-${{ matrix.goarch }}
 
+    - name: Verify binary
+      run: dist/http-code-${{ matrix.goos }}-${{ matrix.goarch }} 200
+
     - name: Upload binaries
       uses: actions/upload-artifact@v3
       with:
