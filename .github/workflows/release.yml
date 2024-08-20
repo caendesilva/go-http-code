@@ -1,0 +1,56 @@
+name: Build and Upload Binaries
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:  # Allows manual trigger of the workflow from the Actions tab
+
+jobs:
+  build:
+    name: Build http-code binaries
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [amd64, arm64]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'  # Use a specific version or 'stable' to always get the latest stable version
+
+    - name: Build binary
+      run: |
+        mkdir -p dist
+        GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/http-code-${{ matrix.goos }}-${{ matrix.goarch }}
+
+    - name: Upload binaries
+      uses: actions/upload-artifact@v3
+      with:
+        name: http-code-${{ matrix.goos }}-${{ matrix.goarch }}
+        path: dist/http-code-${{ matrix.goos }}-${{ matrix.goarch }}
+
+  release:
+    name: Create GitHub Release and Upload Assets
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download binaries
+      uses: actions/download-artifact@v3
+      with:
+        path: dist
+
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v1
+      if: ${{ github.event_name == 'release' }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: dist/*
+        asset_name: http-code-${{ matrix.goos }}-${{ matrix.goarch }}
+        asset_content_type: application/octet-stream
