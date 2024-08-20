@@ -48,14 +48,8 @@ jobs:
         pattern: http-code-*
         merge-multiple: true
 
-    - name: Debug
-      run: ls -R dist
-
     - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
+      uses: softprops/action-gh-release@v2
       if: ${{ github.event_name == 'release' }}
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: dist/*
-        asset_name: http-code-${{ matrix.goos }}-${{ matrix.goarch }}
-        asset_content_type: application/octet-stream
+        files: dist/*
