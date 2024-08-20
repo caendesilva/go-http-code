@@ -1,39 +1,34 @@
 # Version for this file.
 version: 1
 
-# List of environment variables used during compilation.
+# (Optional) List of env variables used during compilation.
 env:
   - GO111MODULE=on
   - CGO_ENABLED=0
 
-# Compiler flags.
+# (Optional) Flags for the compiler.
 flags:
   - -trimpath
   - -tags=netgo
 
-# Target platforms and architectures for compilation.
-targets:
-  - goos: linux
-    goarch: amd64
-    binary: http-code-linux-amd64
+# The OS to compile for. GOOS env variable will be set to this value.
+goos: linux
 
-  - goos: linux
-    goarch: arm64
-    binary: http-code-linux-arm64
+# The architecture to compile for. GOARCH env variable will be set to this value.
+goarch: amd64
 
-  - goos: darwin
-    goarch: amd64
-    binary: http-code-darwin-amd64
+# (Optional) Entrypoint to compile.
+# main: ./path/to/main.go
 
-  - goos: darwin
-    goarch: arm64
-    binary: http-code-darwin-arm64
+# (Optional) Working directory. (default: root of the project)
+# dir: ./relative/path/to/dir
 
-  - goos: windows
-    goarch: amd64
-    binary: http-code-windows-amd64.exe
+# Binary output name.
+# {{ .Os }} will be replaced by goos field in the config file.
+# {{ .Arch }} will be replaced by goarch field in the config file.
+binary: binary-{{ .Os }}-{{ .Arch }}
 
-# ldflags for dynamic versioning and metadata.
+# (Optional) ldflags generated dynamically in the workflow, and set as the evaluated-envs input variables in the workflow.
 ldflags:
   - "-X main.Version={{ .Env.VERSION }}"
   - "-X main.Commit={{ .Env.COMMIT }}"
