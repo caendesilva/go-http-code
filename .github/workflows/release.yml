@@ -5,6 +5,9 @@ on:
     types: [published]
   workflow_dispatch:  # Allows manual trigger of the workflow from the Actions tab
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build http-code binaries
