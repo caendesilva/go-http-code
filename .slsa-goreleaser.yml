@@ -1,0 +1,41 @@
+# Version for this file.
+version: 1
+
+# List of environment variables used during compilation.
+env:
+  - GO111MODULE=on
+  - CGO_ENABLED=0
+
+# Compiler flags.
+flags:
+  - -trimpath
+  - -tags=netgo
+
+# Target platforms and architectures for compilation.
+targets:
+  - goos: linux
+    goarch: amd64
+    binary: http-code-linux-amd64
+
+  - goos: linux
+    goarch: arm64
+    binary: http-code-linux-arm64
+
+  - goos: darwin
+    goarch: amd64
+    binary: http-code-darwin-amd64
+
+  - goos: darwin
+    goarch: arm64
+    binary: http-code-darwin-arm64
+
+  - goos: windows
+    goarch: amd64
+    binary: http-code-windows-amd64.exe
+
+# ldflags for dynamic versioning and metadata.
+ldflags:
+  - "-X main.Version={{ .Env.VERSION }}"
+  - "-X main.Commit={{ .Env.COMMIT }}"
+  - "-X main.CommitDate={{ .Env.COMMIT_DATE }}"
+  - "-X main.TreeState={{ .Env.TREE_STATE }}"
