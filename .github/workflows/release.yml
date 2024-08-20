@@ -27,13 +27,13 @@ jobs:
     - name: Build binary
       run: |
         mkdir -p dist
-        GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/http-code-${{ matrix.goos }}-${{ matrix.goarch }}
+        GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o http-code-${{ matrix.goos }}-${{ matrix.goarch }}
 
     - name: Upload binaries
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: http-code-${{ matrix.goos }}-${{ matrix.goarch }}
-        path: dist/http-code-${{ matrix.goos }}-${{ matrix.goarch }}
+        path: http-code-${{ matrix.goos }}-${{ matrix.goarch }}
 
   release:
     name: Create GitHub Release and Upload Assets
@@ -41,10 +41,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Download binaries
-      uses: actions/download-artifact@v3
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
       with:
         path: dist
+        pattern: my-artifact-*
+        merge-multiple: true
 
     - name: Upload Release Assets
       uses: actions/upload-release-asset@v1
